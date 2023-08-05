@@ -71,3 +71,19 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+# Custom Notes and Tips
+- try to be restricted by the naming convinstion 
+- first is the name of the file followeb by  period then the type then .ts as follows:
+  ```
+  name.type.ts
+  product.module.ts
+  ```
+  - we can use the package manger generator to generate complete module same as artisan in php
+  ```
+  nest g module user
+  // just used to generate user module g fro generate
+  // you can check nest help to see other options
+  ```
+  - it ios not creating a file only with its template but it creats the folder if not exist and modify the mail module imports to contain the new module
+  - you can generate all service controller module just as we done in module

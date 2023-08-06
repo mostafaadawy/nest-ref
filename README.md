@@ -94,7 +94,7 @@ services:
   dev-db:
     image: postgres:13
     ports:
-      - 5434:5432
+      - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
@@ -121,3 +121,43 @@ npm i -D prisma
 ```
 npm i @prisma/client
 ```
+# using Prisma 
+- create ini prisma file 
+```
+npx prisma init
+```
+- this generates `prisma folder and insiide it schema template file`
+- and `.env` file
+- modify the schema file inside prisma created folder and just to add a new table model we can do insert such next code snippets
+```
+model user{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String
+  hash String
+  firstName String?   //? -> optional
+  LastName String?
+}
+
+model bookmark{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type String
+  description String?
+  link String? 
+}
+```
+- modifiy the enviroment varaible inside .env that is used for connection according top the enviroment you choosed in the docker enviroments as follows
+```
+//DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+DATABASE_URL="postgresql://postgres:123@localhost:5432/nest?schema=public"
+```
+- from `docker ps ` command or graphically from the docker desktop we can see opur created docker virtual module
+- `npx prisma --help` shows all the commands that you can use from prisma
+- `npx prisma studio` generate on broswer graphic representation
+- `npx prisma migrate dev` is used to migrate your new models and modifications
+- 

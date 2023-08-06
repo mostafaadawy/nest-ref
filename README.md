@@ -87,3 +87,4 @@ Nest is [MIT licensed](LICENSE).
   ```
   - it ios not creating a file only with its template but it creats the folder if not exist and modify the mail module imports to contain the new module
   - you can generate all service controller module just as we done in module
+  - 

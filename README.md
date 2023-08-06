@@ -75,7 +75,7 @@ Nest is [MIT licensed](LICENSE).
 # Custom Notes and Tips
 - try to be restricted by the naming convinstion 
 - first is the name of the file followeb by  period then the type then .ts as follows:
-  ```
+  ```sh
   name.type.ts
   product.module.ts
   ```
@@ -87,4 +87,37 @@ Nest is [MIT licensed](LICENSE).
   ```
   - it ios not creating a file only with its template but it creats the folder if not exist and modify the mail module imports to contain the new module
   - you can generate all service controller module just as we done in module
-  - 
+## Using Docker for virtual database
+```sh
+version: '3.8'
+services:
+  dev-db:
+    image: postgres:13
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRESS_DB: nest
+    networks:
+      - mostafa
+networks:
+  mostafa:
+```
+- run the composer using the next commans
+```
+docker compose up dev-db -d
+```
+- where **dev-db** is the name of the service in previoius yml code and `-d` for running in background
+
+# to use database we should install [prisma](https://www.prisma.io/) query builder ORM like elquant in laravel
+- install prisma schema and cli
+```
+npm i -D prisma
+```
+- `D` install in development `i` means install 
+- and for the client for also typescript 
+
+```
+npm i @prisma/client
+```

@@ -159,5 +159,7 @@ DATABASE_URL="postgresql://postgres:123@localhost:5432/nest?schema=public"
 - from `docker ps ` command or graphically from the docker desktop we can see opur created docker virtual module
 - `npx prisma --help` shows all the commands that you can use from prisma
 - `npx prisma studio` generate on broswer graphic representation
-- `npx prisma migrate dev` is used to migrate your new models and modifications
+- `npx prisma migrate dev` is used to migrate your new models and modifications and create sql files
+-  what is really nice from prisma is it run generate `npx prosma generate` automatically that creates interfaces for the generated module so that we can use it as models in laravel all that done automatically just by migrating
+- `npx prisma studio` is used to show such as phpmyadmin
 - 

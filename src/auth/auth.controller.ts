@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Req,
+  Body,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
@@ -12,8 +13,8 @@ export class AuthController {
     private readonly authService: AuthService,
   ) {}
   @Post('signup')
-  signup(@Req() request: Request) {
-    console.log('request', request);
+  signup(@Body() dto: any) {
+    console.log('dto', dto);
     return this.authService.signUp();
   }
   @Post('signin')

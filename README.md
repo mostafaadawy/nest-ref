@@ -218,4 +218,4 @@ signup(@Req() request: Request) {
   }
 ```
 
--
+- using `@Body()` decoration for requiring the data Object from request dto

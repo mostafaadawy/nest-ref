@@ -307,3 +307,26 @@ bootstrap();```
 ````
 
 - now try sending from postman
+
+# What is whitelist
+
+- it is an option that we can call in the configuration of global validator in main ts file to just clean the request from un required data that is not in interface check the code
+
+```
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true }),
+  );
+  await app.listen(3000);
+}
+bootstrap();
+
+```
+
+- you can check by send from bost man unrequired key and value in the body
+- where it is just compare received data with the interface and then filtter un reqyuired data

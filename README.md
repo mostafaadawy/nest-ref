@@ -330,3 +330,39 @@ bootstrap();
 
 - you can check by send from bost man unrequired key and value in the body
 - where it is just compare received data with the interface and then filtter un reqyuired data
+
+# Auth.service singning up
+
+- first we need to install argon2 `npm i argon2` the library thaty we will use to hash our code then write the code as follows :
+
+```
+
+```
+
+- second we need not to send all data espeicaly hash so we have two options
+  - first is to select the required data to send
+- second is to delete prohibted to send back such as password hash value
+
+```
+async signUp(dto: AuthDto) {
+    //generate the password hash
+    const hash = await argon.hash(dto.password);
+    //save the new user in the db
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        hash: hash,
+      },
+      // select: {
+      //   id: true,
+      //   email: true,
+      //   createdAt: true,
+      // },
+    });
+    //return saved user info except hash
+    delete user.hash;
+    return user;
+  }
+```
+
+- note that argon is async function

@@ -6,14 +6,14 @@ import {
   Body,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthTdo } from './dto';
+import { AuthDto } from './dto';
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
   ) {}
   @Post('signup')
-  signup(@Body('email') dto: AuthTdo) {
+  signup(@Body() dto: AuthDto) {
     console.log({ dto });
     return this.authService.signUp();
   }

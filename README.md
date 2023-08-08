@@ -259,7 +259,7 @@ signup(@Req() request: Request) {
 # Using from Interface and Validation
 
 - first install validation library `npm i class-validator class-transformer`
-- convert AuthTdo interface to class to use decorator @IsEmail and others to become as follows:
+- convert AuthDto interface to class to use decorator @IsEmail and others to become as follows:
 
 ```
   import {
@@ -267,7 +267,7 @@ signup(@Req() request: Request) {
     IsEmail,
     IsNotEmpty,
   } from 'class-validator';
-export class AuthTdo {
+export class AuthDto {
 @IsEmail()
 @IsNotEmpty()
 email: String;
@@ -282,11 +282,28 @@ dont forget to return the code to
 ```
 
 @Post('signup')
-signup(@Body('email') dto: AuthTdo) {
+signup(@Body() dto: AuthDto) {
 console.log({ dto });
 return this.authService.signUp();
 }
 
 ```
 
--
+# if sent missing data request validation is still not working but why?
+
+- that is because you should import pipevalidation globally to main function as follows:
+
+````
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
+  await app.listen(3000);
+}
+bootstrap();```
+````
+
+- now try sending from postman

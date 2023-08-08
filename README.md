@@ -205,4 +205,4 @@ ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (?).
 # how about importing database module to every module
 
 - instead of importing it indedidually we can use `@Global()` decoration on the required module which is prisma module to allow these modules to other modules by importing it only in the main module and set it as global
--
+- now you can remove its import from other indevidual module as long as it is seen and imported from the main module and it is set to be global module

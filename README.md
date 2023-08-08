@@ -219,3 +219,74 @@ signup(@Req() request: Request) {
 ```
 
 - using `@Body()` decoration for requiring the data Object from request dto
+
+# Creating DTO internace
+
+- using `interfaces` or may be as we can see next `classes` that holds our data values helps in the following:
+  - declrearing our varaibles with its types to avoid using `any` for typescripting
+  - by defining types we can verify and validate our received data easly
+- it is recommended when we have more that data interface or class to create a folder contains index file and export everything from other adjacent files in the same folder and that helps importing all exported interfaces by just importing this colder name that will access its index by default so this index file will export all other other modules
+
+# Using Pips (function that transform data such as parsing parseInt where it stop and return mismatch datatype even before validation) check next code
+
+```
+  @Post('signup')
+  signup(
+    @Body('email') email: string,
+    @Body('password', ParseIntPipe)
+    password: string,
+  ) {
+    console.log({
+      email,
+      typeOfEmail: typeof email,
+      password,
+      typeofPassword: typeof password,
+    });
+    return this.authService.signUp();
+  }
+```
+
+- if you send request with error missing or string instead of number you will get next respoce without even log function in previous code is eccessed
+
+```
+{
+    "message": "Validation failed (numeric string is expected)",
+    "error": "Bad Request",
+    "statusCode": 400
+}
+```
+
+# Using from Interface and Validation
+
+- first install validation library `npm i class-validator class-transformer`
+- convert AuthTdo interface to class to use decorator @IsEmail and others to become as follows:
+
+```
+  import {
+    IsString,
+    IsEmail,
+    IsNotEmpty,
+  } from 'class-validator';
+export class AuthTdo {
+@IsEmail()
+@IsNotEmpty()
+email: String;
+@IsString()
+@IsNotEmpty()
+password: String;
+}
+```
+
+dont forget to return the code to
+
+```
+
+@Post('signup')
+signup(@Body('email') dto: AuthTdo) {
+console.log({ dto });
+return this.authService.signUp();
+}
+
+```
+
+-

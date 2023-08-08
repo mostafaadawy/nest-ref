@@ -191,3 +191,13 @@ DATABASE_URL="postgresql://postgres:123@localhost:5432/nest?schema=public"
 - in case we want to generate service without testing service file `nest g service prisma --no-spec`
 - in the `service` we will create our logics tthat connects to database such as model in laravel
 - for that issue in `prisma service class` make it extending `PrismaClient`
+
+# Solving Exporting error
+
+- when just we try to use service from prisma module to other module although that we imported it to the module of the other controller but we got this message
+
+```
+ERROR [ExceptionHandler] Nest can't resolve dependencies of the AuthService (?). Please make sure that the argument PrismaService at index [0] is available in the AuthModule context
+```
+
+- that is because if other module so we have to export it first

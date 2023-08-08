@@ -73,8 +73,9 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](LICENSE).
 
 # Custom Notes and Tips
-- try to be restricted by the naming convinstion 
-- first is the name of the file followeb by  period then the type then .ts as follows:
+
+- try to be restricted by the naming convinstion
+- first is the name of the file followeb by period then the type then .ts as follows:
   ```sh
   name.type.ts
   product.module.ts
@@ -87,7 +88,9 @@ Nest is [MIT licensed](LICENSE).
   ```
   - it ios not creating a file only with its template but it creats the folder if not exist and modify the mail module imports to contain the new module
   - you can generate all service controller module just as we done in module
+
 ## Using Docker for virtual database
+
 ```sh
 version: '3.8'
 services:
@@ -104,31 +107,42 @@ services:
 networks:
   mostafa:
 ```
+
 - run the composer using the next commans
+
 ```
 docker compose up dev-db -d
 ```
+
 - where **dev-db** is the name of the service in previoius yml code and `-d` for running in background
 
 # to use database we should install [prisma](https://www.prisma.io/) query builder ORM like elquant in laravel
+
 - install prisma schema and cli
+
 ```
 npm i -D prisma
 ```
-- `D` install in development `i` means install 
-- and for the client for also typescript 
+
+- `D` install in development `i` means install
+- and for the client for also typescript
 
 ```
 npm i @prisma/client
 ```
-# using Prisma 
-- create ini prisma file 
+
+# using Prisma
+
+- create ini prisma file
+
 ```
 npx prisma init
 ```
+
 - this generates `prisma folder and insiide it schema template file`
 - and `.env` file
 - modify the schema file inside prisma created folder and just to add a new table model we can do insert such next code snippets
+
 ```
 model user{
   id Int @id @default(autoincrement())
@@ -148,18 +162,32 @@ model bookmark{
 
   type String
   description String?
-  link String? 
+  link String?
 }
 ```
+
 - modifiy the enviroment varaible inside .env that is used for connection according top the enviroment you choosed in the docker enviroments as follows
+
 ```
 //DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
 DATABASE_URL="postgresql://postgres:123@localhost:5432/nest?schema=public"
 ```
+
 - from `docker ps ` command or graphically from the docker desktop we can see opur created docker virtual module
 - `npx prisma --help` shows all the commands that you can use from prisma
 - `npx prisma studio` generate on broswer graphic representation
 - `npx prisma migrate dev` is used to migrate your new models and modifications and create sql files
--  what is really nice from prisma is it run generate `npx prosma generate` automatically that creates interfaces for the generated module so that we can use it as models in laravel all that done automatically just by migrating
+- what is really nice from prisma is it run generate `npx prosma generate` automatically that creates interfaces for the generated module so that we can use it as models in laravel all that done automatically just by migrating
 - `npx prisma studio` is used to show such as phpmyadmin
-- 
+
+# note
+
+- to set format on save from extention install prettier formatter then search setting for formatting then check it to anable it on save then in the edit in json in the same page write ` "editor.defaultFormatter": "esbenp.prettier-vscode"` in the setting json file
+- you can now adapt line width in prettier for example add to prettierrc json `"printWidth": 50"`
+
+# Create Prisma Module to be used as module for models to extract data using service
+
+- `nest g module prisma` and `nest g service prisma`
+- in case we want to generate service without testing service file `nest g service prisma --no-spec`
+- in the `service` we will create our logics tthat connects to database such as model in laravel
+- for that issue in `prisma service class` make it extending `PrismaClient`

@@ -495,3 +495,18 @@ model Bookmark{
     return user;
   }
 ```
+
+# lets create some useful scripts
+
+- in package.json we will add some scripts to do migration and run as follows
+
+```
+ "prisma:dev:deploy": "prisma migrate deploy",
+    "prisma:dev:studio": "prisma studio",
+    "db:dev:rm": "docker compose rm dev-db -s -f -v",
+    "db:dev:up": "docker compose up dev-db -d",
+    "db:dev:restart": "npm run db:dev:rm && npm run db:dev:up && sleep 1 && npm run prisma:dev:deploy",
+```
+
+- note that in calling subscript in side script like composer remove and up we have to call npm run or yarn foreach one also we need to leave time splee time in seconds just to be sure that the docker is up
+- the script is simply remove the image and container by force -f after stoping it -s and -v then creat another instance again then wait for creation then we use deploy prisma not migrate cause the deference is that deploy just apply existing migration not migrate new thing and if we use migrate dev it can also apply but it requires some user inputs

@@ -422,3 +422,44 @@ model Bookmark{
 - also note that i deleted my migration by hand whichis not recommended because prisma client creates backend code for your models so it is not right to delete it manually but the righyt thing is to modify using the cli command
 - so to solve previous error the only solution that is not right is to uninstall prisma client `npm uninstall @prisma/client`
 -
+
+# returning to our code
+
+- now if we send user registeration data with duplicated email it returns server error which is not handeled error and to handel it
+- we can handel it using try catch method and we can defined the error if duplication then send credential taken message check next code snippet:
+
+```
+ async signUp(dto: AuthDto) {
+    //generate the password hash
+    const hash = await argon.hash(dto.password);
+    //save the new user in the db
+    try {
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          hash: hash,
+        },
+        // select: {
+        //   id: true,
+        //   email: true,
+        //   createdAt: true,
+        // },
+      });
+      //return saved user info except hash
+      delete user.hash;
+      return user;
+    } catch (error) {
+      if (
+        error instanceof
+        PrismaClientKnownRequestError
+      ) {
+        if (error.code === 'P2002') {
+          throw new ForbiddenException(
+            'Credential taken',
+          );
+        }
+      }
+      throw error;
+    }
+  }
+```

@@ -707,4 +707,65 @@ export class JwtStrategy extends PassportStrategy(
 # creating user to check the authentication
 
 - just create get in user controller
--
+
+# Using Guards such as midleware
+
+- we can use nestjs passport guard
+
+# NOte we can navoigate librarys by pressing it for example we can check passport jwt to find out what modules that we can use
+
+- note that vthe startegy is change as follows
+- ```
+  import { Injectable } from '@nestjs/common';
+  import { ConfigService } from '@nestjs/config';
+  import { PassportStrategy } from '@nestjs/passport';
+  import {
+    ExtractJwt,
+    Strategy,
+  } from 'passport-jwt';
+  @Injectable()
+  export class JwtStrategy extends PassportStrategy(
+    Strategy,
+    'jwt',
+  ) {
+    constructor(config: ConfigService) {
+      super({
+        jwtFromRequest:
+          ExtractJwt.fromAuthHeaderAsBearerToken(),
+        secretOrKey: config.get('JWT_SECRET'),
+      });
+    }
+    validate(payload: any) {
+      console.log({
+        payload,
+      });
+      return payload;
+    }
+  }
+  ```
+
+- first edit to add `'jwt'` after strategy that is the name of the stratygy that we take to verify whered if login by facebook we can edit this jwt ket to be facebook or if session oit will be session
+- note that if we forget to add it nothing happen because it is only one startegy and it will be sey by default
+- **the most imnportant is adding `validate` function that function that if validate it will work as a birdge to send the suspended payload in this current guard stratyegy to the next guard or midelware or even if it was the last guard to the controller that is only if it validate**
+- in user controller that is how we call the midelware/guard
+
+```
+import {
+  Controller,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
+@Controller('user')
+export class UserController {
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  getMe() {
+    return 'user info';
+  }
+}
+```
+
+- just use the decoration `@UseGuards` we can add alot of gurds
+- this current gurad argument will be the name of the strartegy used

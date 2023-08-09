@@ -510,3 +510,196 @@ model Bookmark{
 
 - note that in calling subscript in side script like composer remove and up we have to call npm run or yarn foreach one also we need to leave time splee time in seconds just to be sure that the docker is up
 - the script is simply remove the image and container by force -f after stoping it -s and -v then creat another instance again then wait for creation then we use deploy prisma not migrate cause the deference is that deploy just apply existing migration not migrate new thing and if we use migrate dev it can also apply but it requires some user inputs
+
+# Token JWT and config package to import secret key to it easly
+
+- install config `npm i @nestjs/config`
+- add configmodule to app modules
+
+```
+@Module({
+  imports: [
+    AuthModule,
+    UserModule,
+    BookmarkModule,
+    PrismaModule,
+    ConfigModule.forRoot({}),
+  ],
+})
+export class AppModule {}
+```
+
+- how to use?
+- as we need it in prisma service so we can call it in contructor where it is inectable means able to be injected then when calling config it will get varable from ,nv file
+
+```
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PrismaClient } from '@prisma/client';
+
+@Injectable()
+export class PrismaService extends PrismaClient {
+  constructor(config: ConfigService) {
+    super({
+      datasources: {
+        db: {
+          url: config.get('DATABASE_URL'),
+        },
+      },
+    });
+  }
+}
+```
+
+it will not work untill we make it global config module and that can be done from app module "main module" and set it `ConfigModule.forRoot({isGlobale:true}),`
+
+# Passport Jwt
+
+- first install passport from nest to insert module for it with its decoration then jwt also module and then normal passport-jwt and adding its typescripyt for dev as follows:
+
+```
+npm i @nestjs/passport @nestjs/jwt passport-jwt
+npm i -D @types/passport-jwt
+
+```
+
+- inside auth module where we will use
+- import its module `imports: [JwtModule.register({})],` in auth.module
+- then inject its service in the required module service by adding it in its constructor then use it then create signTiken
+
+```
+import {
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { AuthDto } from './dto';
+import * as argon from 'argon2';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+@Injectable()
+export class AuthService {
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+    private config: ConfigService,
+  ) {}
+  async login(dto: AuthDto) {
+    //find the user email
+    const user =
+      await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+    // if user not exist throw exception
+    if (!user)
+      throw new ForbiddenException(
+        'Credentials incorrect',
+      );
+    // compare passwords
+    const pwMatch = await argon.verify(
+      user.hash,
+      dto.password,
+    );
+    // if password is incorrect throw exception
+    if (!pwMatch)
+      throw new ForbiddenException(
+        'Credentials incorrect',
+      );
+    // send back the user
+    return await this.signToken(
+      user.id,
+      user.email,
+    );
+  }
+  async signUp(dto: AuthDto) {
+    //generate the password hash
+    const hash = await argon.hash(dto.password);
+    //save the new user in the db
+    try {
+      const user = await this.prisma.user.create({
+        data: {
+          email: dto.email,
+          hash: hash,
+        },
+        // select: {
+        //   id: true,
+        //   email: true,
+        //   createdAt: true,
+        // },
+      });
+      //return saved user info except hash
+      delete user.hash;
+      return user;
+    } catch (error) {
+      if (
+        error instanceof
+        PrismaClientKnownRequestError
+      ) {
+        if (error.code === 'P2002') {
+          throw new ForbiddenException(
+            'Credential taken',
+          );
+        }
+      }
+      throw error;
+    }
+  }
+  async signToken(
+    userId: number,
+    email: string,
+  ): Promise<{ access_token: string }> {
+    const payload = {
+      sub: userId,
+      email,
+    };
+    const secret = this.config.get('JWT_SECRET');
+    const token = this.jwt.sign(payload, {
+      expiresIn: '15m',
+      secret: secret,
+    });
+    return { access_token: token };
+  }
+}
+
+```
+
+- now we can test it using postman
+
+# Verifying token
+
+- steps goes as a stratgey where it will extract key and then verfy
+- in nest every thing is modules and decorator
+- config is module
+- as a rule all required and shared modules should be global
+- create a seperate folder strargy for the token
+- the strategy file class will looks llike as follows:
+
+```
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+import {
+  ExtractJwt,
+  Strategy,
+} from 'passport-jwt';
+@Injectable()
+export class JwtStrategy extends PassportStrategy(
+  Strategy,
+) {
+  constructor(config: ConfigService) {
+    super({
+      JwtFromRequest:
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: config.get('JWT_SECRET'),
+    });
+  }
+}
+
+```
+
+- do not forget to set it in the provider in auth.module as it will also provide a service in that module
+- and we just put it in providers nor module where we already added module jwt but this is another service?????????????? why provider not (creating module that imhas this service then importing it)
+
+- now the service provider is ready
+- note this strategy for token can also exist others for logging using facebook and google and so on

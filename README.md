@@ -466,4 +466,32 @@ model Bookmark{
 
 # signing in logging in
 
--
+- check next code
+
+```
+ async login(dto: AuthDto) {
+    //find the user email
+    const user =
+      await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+    // if user not exist throw exception
+    if (!user)
+      throw new ForbiddenException(
+        'Credentials incorrect',
+      );
+    // compare passwords
+    const pwMatch = await argon.verify(
+      user.hash,
+      dto.password,
+    );
+    // if password is incorrect throw exception
+    if (!pwMatch)
+      throw new ForbiddenException(
+        'Credentials incorrect',
+      );
+    // send back the user
+    delete user.hash;
+    return user;
+  }
+```

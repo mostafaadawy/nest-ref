@@ -703,3 +703,8 @@ export class JwtStrategy extends PassportStrategy(
 
 - now the service provider is ready
 - note this strategy for token can also exist others for logging using facebook and google and so on
+
+# creating user to check the authentication
+
+- just create get in user controller
+-

@@ -366,3 +366,59 @@ async signUp(dto: AuthDto) {
 ```
 
 - note that argon is async function
+
+# Edit Prisma module name to be @@map users and @@map bookmarks and add @unique to email
+
+- we can also add many to one relation where every user can have many bookmarks
+-
+
+```
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email String @unique
+  hash String
+  firstName String?   //? -> optional
+  LastName String?
+  bookmarks Bookmark[]
+
+  @@map("users")
+}
+
+model Bookmark{
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type String
+  description String?
+  link String?
+
+  userId Int
+  user User @relation(fields:[userId], references: [id])
+
+  @@map("bookmarks")
+}
+```
+
+- `npx prisma migrate dev`
+
+# note that `nest` is `cli` package command do not need `run time` but prisma is apackage so it needs `npx`
+
+- also note that i deleted my migration by hand whichis not recommended because prisma client creates backend code for your models so it is not right to delete it manually but the righyt thing is to modify using the cli command
+- so to solve previous error the only solution that is not right is to uninstall prisma client `npm uninstall @prisma/client`
+-

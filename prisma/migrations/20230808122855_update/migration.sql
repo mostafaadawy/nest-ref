@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "user" (
+CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -8,17 +8,24 @@ CREATE TABLE "user" (
     "firstName" TEXT,
     "LastName" TEXT,
 
-    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "bookmark" (
+CREATE TABLE "bookmarks" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "type" TEXT NOT NULL,
     "description" TEXT,
     "link" TEXT,
+    "userId" INTEGER NOT NULL,
 
-    CONSTRAINT "bookmark_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "bookmarks_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- AddForeignKey
+ALTER TABLE "bookmarks" ADD CONSTRAINT "bookmarks_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
